@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="limakBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#0B1E36" />
+      <stop offset="100%" stopColor="#050E1A" />
+    </linearGradient>
+    <linearGradient id="limakRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FF334B" />
+      <stop offset="100%" stopColor="#D31027" />
+    </linearGradient>
+  </defs>
+
+  <!-- Arka Plan Kartı -->
+  <rect width="200" height="200" rx="44" fill="url(#limakBg)" />
+  <rect width="196" height="196" x="2" y="2" rx="42" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+
+  <!-- Limak Dinamik Geometrik Çimento Üçgen / Elmas İkonu -->
+  <g transform="translate(100, 78)">
+    <!-- Sol Dinamik Kanat -->
+    <path d="M-42 16 L-10 -38 L-4 -38 L-22 16 Z" fill="url(#limakRed)" />
+    <!-- Orta Elmas Blok -->
+    <path d="M-14 16 L12 -38 L24 -38 L14 16 Z" fill="#FFFFFF" opacity="0.95" />
+    <!-- Sağ Dinamik Parça -->
+    <path d="M22 16 L38 -16 L44 -16 L34 16 Z" fill="url(#limakRed)" />
+  </g>
+
+  <!-- Limak Metni -->
+  <text x="100" y="142" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" fill="#FFFFFF" letter-spacing="3.5">
+    LİMAK
+  </text>
+
+  <!-- Çimento Alt Rozeti -->
+  <rect x="52" y="156" width="96" height="18" rx="9" fill="rgba(211,16,39,0.25)" stroke="#D31027" stroke-width="1" />
+  <text x="100" y="169" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="9" fill="#FF4D61" letter-spacing="1.5">
+    ÇİMENTO
+  </text>
+</svg>
