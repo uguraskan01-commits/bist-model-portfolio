@@ -62,6 +62,11 @@ export interface TechnicalAnalysis {
   };
   foreignOwnership: ForeignOwnership;
   priceAction: PriceActionAnalysis;
+  momentum?: {
+    weeklyReturn?: number;
+    monthlyReturn?: number;
+    ytdReturn?: number;
+  };
 }
 
 export interface FundamentalAnalysis {
@@ -177,6 +182,7 @@ export interface BISTStock {
   high52w: number;
   low52w: number;
   volume24h: number;
+  volume?: number;
   marketCap: number;
   technical: TechnicalAnalysis;
   fundamental: FundamentalAnalysis;

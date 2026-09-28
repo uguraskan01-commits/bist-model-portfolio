@@ -585,10 +585,18 @@ export function getDynamicWeeklyBulletins(stocks: BISTStock[]): WeeklyTradeBulle
 
   return WEEKLY_BULLETINS.map((bulletin) => {
     if (bulletin.isCurrent) {
-      // Aktif hafta: Canlı taramadan gelen gerçek en iyi 5 hisse ile doldur
+      // Aktif hafta: Cuma seansında belirlenen 5 resmi swing trade listesi korunur, sadece canlı piyasa fiyatı güncellenir.
+      const updatedTrades = bulletin.trades.map((trade) => {
+        const stock = stockMap.get(trade.symbol);
+        const livePrice = stock && stock.currentPrice > 0 ? stock.currentPrice : trade.entryPrice;
+        return {
+          ...trade,
+          currentPrice: livePrice,
+        };
+      });
       return {
         ...bulletin,
-        trades: autoActiveTrades.length > 0 ? autoActiveTrades : bulletin.trades,
+        trades: updatedTrades,
       };
     }
 

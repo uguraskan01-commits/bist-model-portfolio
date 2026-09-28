@@ -58,7 +58,7 @@ export function MarketHighlightsView({ stocks, onSelectStock }: MarketHighlights
     // Sektörel performans (Ortalama getiri)
     const sectors: Record<string, { totalChange: number; count: number; inflowScore: number }> = {};
     validStocks.forEach(s => {
-      if (!s.sector || s.sector === 'Diğer') return;
+      if (!s.sector) return;
       if (!sectors[s.sector]) {
         sectors[s.sector] = { totalChange: 0, count: 0, inflowScore: 0 };
       }

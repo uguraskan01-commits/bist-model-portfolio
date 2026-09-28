@@ -84,6 +84,23 @@ export function PortfolioView({ portfolios, onSelectStock }: PortfolioViewProps)
         })}
       </div>
 
+      {/* 📌 Model Portföy Sabit Cuma Kapanış Kuralı Bildirimi */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3.5 rounded-[20px] bg-gradient-to-r from-orange-500/10 via-[#15171E] to-[#0F1116] border border-orange-500/20 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse shrink-0" />
+          <div>
+            <span className="font-bold text-xs text-white">Haftalık Sabit Model Portföy Disiplini:</span>{' '}
+            <span className="text-zinc-400 text-xs">
+              Portföy bileşenleri ve ağırlıkları her Cuma seans kapanışı (18:10) verileriyle kilitlenir ve hafta boyunca sabit kalır. Hafta içi sadece canlı seans fiyatları ve kâr/zarar oranları anlık akar.
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 text-[11px] font-bold text-orange-400 bg-orange-500/15 px-3 py-1.5 rounded-full whitespace-nowrap border border-orange-500/30 shrink-0 self-start sm:self-center">
+          <Clock className="w-3.5 h-3.5" />
+          <span>Yeniden Dengeleme: Her Cuma 18:10</span>
+        </div>
+      </div>
+
       {/* 2. Seçili Strateji Üst Özet Kartı (Premium Midas Stili) */}
       <div className="rounded-[32px] bg-gradient-to-br from-[#15171E] to-[#1A1110] border border-orange-500/10 shadow-[0_8px_32px_rgba(249,115,22,0.05)] overflow-hidden relative">
         <div className="absolute -top-32 -right-32 p-8 opacity-20 blur-[100px] pointer-events-none">
@@ -230,7 +247,7 @@ export function PortfolioView({ portfolios, onSelectStock }: PortfolioViewProps)
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-full bg-[#1E212B] flex items-center justify-center font-bold text-orange-400 text-xs border border-white/5 shadow-[0_0_10px_rgba(249,115,22,0.1)]">
-                            {Math.round(holding.trendScore)}
+                            {Math.round(holding.trendScore || 0)}
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
