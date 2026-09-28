@@ -17,6 +17,13 @@ Bu proje, Borsa İstanbul (BIST) hisselerini teknik, temel, momentum, KAP duyuru
    - Tek bir sektör ağırlığı %30'u geçemez.
    - Her hissenin hedef fiyatı, stop-loss seviyesi ve getiri potansiyeli bulunur.
 
+## Otomatik Git & GitHub Senkronizasyonu (Zorunlu Kural)
+Kullanıcıdan gelen her geliştirme veya değişiklik talimatının ardından:
+1. Yapılan tüm kod ve dosya değişiklikleri doğrulanır.
+2. Anlamlı bir commit mesajıyla `git add .` ve `git commit` yapılır.
+3. `git push origin main` çalıştırılarak GitHub reposu anında güncellenir.
+4. Kullanıcıya commit özeti ve push durumu iletilir.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
