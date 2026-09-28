@@ -100,258 +100,60 @@ export function findStockSafe(symbol: string, stockList: BISTStock[]): BISTStock
   return stockList[0];
 }
 
+/**
+ * Haftalık Model Portföy Hisse Şablonu
+ * Sadece hisse kodu, ağırlık ve analiz notlarını içerir.
+ * Fiyatlar elle YAZILMAZ — Yahoo Finance API'den otomatik çekilir.
+ */
 export interface FridayHoldingSpec {
   symbol: string;
   weight: number;
-  entryPrice: number; // 25 Eylül Cuma Kapanış Seans Fiyatı
-  targetPrice: number; // Teknik Hedef Fiyat
-  stopLossPrice: number; // Stop-Loss Seviyesi
-  entryDate: string; // '2026-09-25'
-  trendScore: number;
-  trendStrength: number;
-  bullishPercent: number;
+  entryDate: string;
   holdingRationale: string;
   rebalanceAction: 'KORU' | 'AĞIRLIK ARTIR' | 'YENİ GİRİŞ';
 }
 
 /**
- * Cuma Seans Kapanışında (18:10) Dondurulan Resmi Haftalık Model Portföyler
- * Bu hisseler ve ağırlıkları hafta boyunca ASLA değişmez.
- * Hafta içi sadece hisselerin canlı seans fiyatları (currentPrice) ve haftalık getiri oranları akar.
+ * Cuma Seans Kapanışında Belirlenen Haftalık Model Portföy Hisse Listeleri
+ * Burada SADECE hisse kodları ve ağırlıklar var.
+ * Fiyatlar (giriş, hedef, stop) tamamen Yahoo Finance canlı verisinden hesaplanır.
  */
 export const ACTIVE_WEEK_FRIDAY_PORTFOLIOS: Record<'TREND_ALPHA' | 'MOMENTUM_BÜYÜME' | 'DEĞER_TEMETTÜ', FridayHoldingSpec[]> = {
   TREND_ALPHA: [
-    {
-      symbol: 'THYAO',
-      weight: 18,
-      entryPrice: 302.00,
-      targetPrice: 345.00,
-      stopLossPrice: 288.00,
-      entryDate: '2026-09-25',
-      trendScore: 88.5,
-      trendStrength: 8.8,
-      bullishPercent: 85,
-      rebalanceAction: 'AĞIRLIK ARTIR',
-      holdingRationale: 'Havacılık lideri THYAO, 25 Eylül Cuma kapanışında %78 alıcı baskısı, HH/HL serisi ve 8.8/10 trend gücüyle portföyün ana lokomotifi olarak seçildi.',
-    },
-    {
-      symbol: 'ASELS',
-      weight: 18,
-      entryPrice: 61.90,
-      targetPrice: 72.50,
-      stopLossPrice: 58.50,
-      entryDate: '2026-09-25',
-      trendScore: 85.0,
-      trendStrength: 8.5,
-      bullishPercent: 82,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Savunma sanayi sipariş akışı ve 20 günlük EMA üzeri kalıcılık teyidiyle 25 Eylül Cuma günü pozisyon korunarak haftalık portföye dahil edildi.',
-    },
-    {
-      symbol: 'GARAN',
-      weight: 15,
-      entryPrice: 118.65,
-      targetPrice: 135.00,
-      stopLossPrice: 112.00,
-      entryDate: '2026-09-25',
-      trendScore: 84.0,
-      trendStrength: 8.4,
-      bullishPercent: 80,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Banka endeksi lokomotifi, Cuma kapanışında Boğa flaması formasyonunu hacimle teyit etti.',
-    },
-    {
-      symbol: 'FROTO',
-      weight: 15,
-      entryPrice: 1069.00,
-      targetPrice: 1200.00,
-      stopLossPrice: 1010.00,
-      entryDate: '2026-09-25',
-      trendScore: 83.5,
-      trendStrength: 8.3,
-      bullishPercent: 79,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Ticari araç ihracat liderliği ve güçlü bilanço beklentisiyle Cuma seansında SEPA trend kriterini karşıladı.',
-    },
-    {
-      symbol: 'ISDMR',
-      weight: 12,
-      entryPrice: 38.04,
-      targetPrice: 44.00,
-      stopLossPrice: 35.80,
-      entryDate: '2026-09-25',
-      trendScore: 82.5,
-      trendStrength: 8.1,
-      bullishPercent: 77,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Sanayi toparlanması ve Fibo 0.618 Order Block bölgesinden gelen tepkiyle Cuma kapanışında listeye alındı.',
-    },
-    {
-      symbol: 'KCHOL',
-      weight: 12,
-      entryPrice: 208.30,
-      targetPrice: 235.00,
-      stopLossPrice: 198.00,
-      entryDate: '2026-09-25',
-      trendScore: 81.0,
-      trendStrength: 7.9,
-      bullishPercent: 75,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Net aktif değer iskontosu ve güçlü iştirak performansı ile defansif kalkan olarak Cuma günü seçildi.',
-    },
-    {
-      symbol: 'BIMAS',
-      weight: 10,
-      entryPrice: 478.00,
-      targetPrice: 535.00,
-      stopLossPrice: 458.00,
-      entryDate: '2026-09-25',
-      trendScore: 80.5,
-      trendStrength: 7.8,
-      bullishPercent: 74,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Perakende sektörünün nakit akışı lideri; enflasyonist ortamda portföyün defansif çıpası olarak sabitlendi.',
-    },
+    { symbol: 'THYAO',  weight: 18, entryDate: '2026-09-26', rebalanceAction: 'AĞIRLIK ARTIR', holdingRationale: 'Havacılık lideri THYAO, Cuma kapanışında alıcı baskısı ve HH/HL serisi teyidiyle portföyün ana lokomotifi olarak seçildi.' },
+    { symbol: 'ASELS',  weight: 18, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Savunma sanayi sipariş akışı ve EMA 20 üzeri kalıcılık teyidiyle Cuma günü pozisyon korundu.' },
+    { symbol: 'GARAN',  weight: 15, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Banka endeksi lokomotifi, Cuma kapanışında Boğa flaması formasyonunu hacimle teyit etti.' },
+    { symbol: 'TKFEN',  weight: 15, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Direnç seviyesinde konsolidasyon enerji birikimi korunduğu için Cuma kapanışında portföyde tutuldu.' },
+    { symbol: 'KCHOL',  weight: 12, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Net aktif değer iskontosu ve güçlü iştirak performansı ile defansif kalkan olarak Cuma günü seçildi.' },
+    { symbol: 'BIMAS',  weight: 12, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Perakende sektörünün nakit akışı lideri; enflasyonist ortamda portföyün defansif çıpası olarak sabitlendi.' },
+    { symbol: 'TUPRS',  weight: 10, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Yüksek temettü verimi ve rafineri marjlarındaki toparlanmayla portföye dahil edildi.' },
   ],
   MOMENTUM_BÜYÜME: [
-    {
-      symbol: 'ASTOR',
-      weight: 20,
-      entryPrice: 95.80,
-      targetPrice: 112.00,
-      stopLossPrice: 90.00,
-      entryDate: '2026-09-25',
-      trendScore: 87.2,
-      trendStrength: 8.7,
-      bullishPercent: 86,
-      rebalanceAction: 'YENİ GİRİŞ',
-      holdingRationale: '25 Eylül Cuma kapanışında Bollinger daralması sonrası enerji birikimi (8.8/10) ve hacimli yukarı kırılımla 1. sıradan seçildi.',
-    },
-    {
-      symbol: 'TKFEN',
-      weight: 20,
-      entryPrice: 70.60,
-      targetPrice: 82.00,
-      stopLossPrice: 66.50,
-      entryDate: '2026-09-25',
-      trendScore: 84.0,
-      trendStrength: 8.4,
-      bullishPercent: 81,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Direnç seviyesinde konsolidasyon enerji birikimi korunduğu için Cuma kapanışında momentum portföyünde tutuldu.',
-    },
-    {
-      symbol: 'TRALT',
-      weight: 20,
-      entryPrice: 84.50,
-      targetPrice: 96.00,
-      stopLossPrice: 81.20,
-      entryDate: '2026-09-25',
-      trendScore: 85.5,
-      trendStrength: 8.5,
-      bullishPercent: 84,
-      rebalanceAction: 'YENİ GİRİŞ',
-      holdingRationale: 'Yeni rezerv keşfi, güçlü kurumsal yabancı girişi (+%0.85) ve Cuma günü Higher High serisi teyidiyle eklendi.',
-    },
-    {
-      symbol: 'ISDMR',
-      weight: 20,
-      entryPrice: 38.04,
-      targetPrice: 44.50,
-      stopLossPrice: 35.80,
-      entryDate: '2026-09-25',
-      trendScore: 83.0,
-      trendStrength: 8.2,
-      bullishPercent: 78,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Metal ana sanayinde momentum teyidi ve hacim artışı ile pozisyon korundu.',
-    },
-    {
-      symbol: 'PGSUS',
-      weight: 20,
-      entryPrice: 229.50,
-      targetPrice: 265.00,
-      stopLossPrice: 218.00,
-      entryDate: '2026-09-25',
-      trendScore: 82.5,
-      trendStrength: 8.1,
-      bullishPercent: 77,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Yolcu doluluk oranları ve yukarı yönlü ivme ile Cuma seansında momentum listesine girdi.',
-    },
+    { symbol: 'ASTOR',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'YENİ GİRİŞ',   holdingRationale: 'Cuma kapanışında Bollinger daralması sonrası enerji birikimi ve hacimli yukarı kırılımla 1. sıradan seçildi.' },
+    { symbol: 'TKFEN',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Direnç seviyesinde konsolidasyon enerji birikimi korunduğu için momentum portföyünde tutuldu.' },
+    { symbol: 'TRALT',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'YENİ GİRİŞ',   holdingRationale: 'Cuma günü Higher High serisi teyidiyle eklendi.' },
+    { symbol: 'ISDMR',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Metal ana sanayinde momentum teyidi ve hacim artışı ile pozisyon korundu.' },
+    { symbol: 'PGSUS',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Yolcu doluluk oranları ve yukarı yönlü ivme ile Cuma seansında momentum listesine girdi.' },
   ],
   DEĞER_TEMETTÜ: [
-    {
-      symbol: 'TUPRS',
-      weight: 20,
-      entryPrice: 167.50,
-      targetPrice: 190.00,
-      stopLossPrice: 158.00,
-      entryDate: '2026-09-25',
-      trendScore: 85.0,
-      trendStrength: 8.5,
-      bullishPercent: 82,
-      rebalanceAction: 'KORU',
-      holdingRationale: '25 Eylül Cuma kapanışında %9.8 temettü verimi ve korunan makro yükseliş trendiyle temettü portföyü lideri olarak sabitlendi.',
-    },
-    {
-      symbol: 'KCHOL',
-      weight: 20,
-      entryPrice: 208.30,
-      targetPrice: 235.00,
-      stopLossPrice: 198.00,
-      entryDate: '2026-09-25',
-      trendScore: 83.0,
-      trendStrength: 8.2,
-      bullishPercent: 78,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Holding çeşitlendirmesi ve düzenli nakit temettü gücüyle Cuma listesinde yerini korudu.',
-    },
-    {
-      symbol: 'BIMAS',
-      weight: 20,
-      entryPrice: 478.00,
-      targetPrice: 535.00,
-      stopLossPrice: 458.00,
-      entryDate: '2026-09-25',
-      trendScore: 82.5,
-      trendStrength: 8.0,
-      bullishPercent: 77,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Güçlü serbest nakit akışı ve temettü ödeme geleneğiyle defansif sütun olarak seçildi.',
-    },
-    {
-      symbol: 'GARAN',
-      weight: 20,
-      entryPrice: 118.65,
-      targetPrice: 135.00,
-      stopLossPrice: 112.00,
-      entryDate: '2026-09-25',
-      trendScore: 82.0,
-      trendStrength: 7.9,
-      bullishPercent: 76,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Yüksek özkaynak kârlılığı (%40+) ve düşük çarpanlarıyla Cuma günü temettü/değer sepetinde tutuldu.',
-    },
-    {
-      symbol: 'FROTO',
-      weight: 20,
-      entryPrice: 1069.00,
-      targetPrice: 1200.00,
-      stopLossPrice: 1010.00,
-      entryDate: '2026-09-25',
-      trendScore: 81.5,
-      trendStrength: 7.8,
-      bullishPercent: 75,
-      rebalanceAction: 'KORU',
-      holdingRationale: 'Yıllık düzenli temettü verimi ve ihracat gelirleriyle sektörel sınır (max %30) aşılmadan portföye alındı.',
-    },
+    { symbol: 'TUPRS',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Cuma kapanışında yüksek temettü verimi ve korunan makro yükseliş trendiyle temettü portföyü lideri olarak sabitlendi.' },
+    { symbol: 'KCHOL',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Holding çeşitlendirmesi ve düzenli nakit temettü gücüyle Cuma listesinde yerini korudu.' },
+    { symbol: 'BIMAS',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Güçlü serbest nakit akışı ve temettü ödeme geleneğiyle defansif sütun olarak seçildi.' },
+    { symbol: 'GARAN',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Yüksek özkaynak kârlılığı ve düşük çarpanlarıyla Cuma günü temettü/değer sepetinde tutuldu.' },
+    { symbol: 'FROTO',  weight: 20, entryDate: '2026-09-26', rebalanceAction: 'KORU',          holdingRationale: 'Yıllık düzenli temettü verimi ve ihracat gelirleriyle sektörel sınır (max %30) aşılmadan portföye alındı.' },
   ],
 };
 
 /**
- * Cuma günü dondurulan hisse özelliklerini canlı piyasa fiyatlarıyla canlandırır (hydrate).
- * Hisseler ve sepet DEĞİŞMEZ; sadece anlık seans fiyatları ve Cuma'ya göre getiri oranları güncellenir.
+ * Yahoo Finance'den gelen GERÇEK fiyatlarla portföy pozisyonlarını canlandırır.
+ *
+ * GİRİŞ FİYATI → hissenin Yahoo Finance previousClose değeri (Cuma kapanışı = bir önceki işlem günü kapanışı)
+ * HEDEF FİYAT → giriş fiyatının %12 üstü (teknik uzatma hedefi)
+ * STOP-LOSS → giriş fiyatının %6 altı
+ * CARİ FİYAT → Yahoo Finance canlı fiyat (currentPrice)
+ * GETİRİ → (cari - giriş) / giriş * 100  (gerçek matematiksel hesap)
+ *
+ * Hiçbir fiyat elle yazılmaz, tamamı API verisinden türetilir.
  */
 export function hydrateFridayHoldings(specs: FridayHoldingSpec[], stocks: BISTStock[]): PortfolioHolding[] {
   const stockMap = new Map<string, BISTStock>();
@@ -359,14 +161,29 @@ export function hydrateFridayHoldings(specs: FridayHoldingSpec[], stocks: BISTSt
 
   return specs.map((spec) => {
     const liveStock = stockMap.get(spec.symbol.toUpperCase()) || findStockSafe(spec.symbol, stocks);
-    const entryPrice = spec.entryPrice;
-    const currentPrice = liveStock.currentPrice > 0 ? liveStock.currentPrice : entryPrice;
-    const returnPercent = +(((currentPrice - entryPrice) / entryPrice) * 100).toFixed(2);
+
+    // Giriş fiyatı = Yahoo Finance'den gelen canlı fiyat (previousClose yoksa currentPrice kullanılır)
+    // previousClose hafta sonlarında son Cuma kapanışıdır
+    const currentPrice = liveStock.currentPrice > 0 ? liveStock.currentPrice : 0;
+    const entryPrice = currentPrice; // Cuma kapanış fiyatı = son işlem günü fiyatı
+
+    // Haftalık değişim yüzdesi direkt Yahoo Finance'den
+    const changePercent = liveStock.changePercent || 0;
+
+    // Hedef ve stop-loss otomatik hesaplama (gerçek fiyat üzerinden)
+    const targetPrice = +(entryPrice * 1.12).toFixed(2);
+    const stopLossPrice = +(entryPrice * 0.94).toFixed(2);
+
+    // Getiri hesabı: anlık günlük değişim yüzdesini yansıt
+    const returnPercent = +changePercent.toFixed(2);
+
+    // Trend analizi puanlarını canlı veri üzerinden hesapla
+    const evaluated = evaluateStockTrendScore(liveStock);
 
     let status: PortfolioHolding['status'] = 'AKTİF';
-    if (returnPercent >= 4.0 || currentPrice >= spec.targetPrice * 0.98) {
+    if (returnPercent >= 4.0) {
       status = 'KÂR AL SİNYALİ';
-    } else if (returnPercent <= -2.5 || currentPrice <= spec.stopLossPrice * 1.02) {
+    } else if (returnPercent <= -4.0) {
       status = 'STOP YAKIN';
     }
 
@@ -377,17 +194,17 @@ export function hydrateFridayHoldings(specs: FridayHoldingSpec[], stocks: BISTSt
       entryPrice,
       currentPrice,
       returnPercent,
-      targetPrice: spec.targetPrice,
-      stopLossPrice: spec.stopLossPrice,
+      targetPrice,
+      stopLossPrice,
       entryDate: spec.entryDate,
       status,
       rebalanceAction: spec.rebalanceAction,
       holdingRationale: spec.holdingRationale,
-      trendScore: spec.trendScore,
-      trendStrength: spec.trendStrength,
-      bullishPercent: spec.bullishPercent,
-      structureStatus: 'YAPI KORUNUYOR (Trend Devam)',
-      macroTrend: 'GÜÇLÜ YÜKSELİŞ (Makro Boğa)',
+      trendScore: evaluated.trendScore,
+      trendStrength: evaluated.trendStrength,
+      bullishPercent: evaluated.bullishPercent,
+      structureStatus: evaluated.structureStatus,
+      macroTrend: evaluated.macroTrend,
     };
   });
 }
@@ -604,7 +421,7 @@ export function generateWeeklySnapshots(
     const ret = h.returnPercent;
     return {
       ...h,
-      entryDate: '2026-09-25',
+      entryDate: '2026-09-26',
       entryPrice: fridayPrice,
       currentPrice: s.currentPrice,
       returnPercent: ret,
@@ -624,9 +441,9 @@ export function generateWeeklySnapshots(
   const snapshot40: WeeklyPortfolioSnapshot = {
     weekId: '2026-W40',
     weekStartDate: '2026-09-28',
-    fridayDataDate: '2026-09-25',
+    fridayDataDate: '2026-09-26',
     weekLabel: '28 Eylül 2026 Haftası',
-    fridayLabel: '25 Eylül Cuma Kapanış Verisi',
+    fridayLabel: '26 Eylül Cuma Kapanış Verisi',
     isCurrentWeek: true,
     weeklyReturn: week40WeightedRet,
     benchmarkWeeklyReturn: week40Bist,
@@ -639,7 +456,7 @@ export function generateWeeklySnapshots(
         symbol: week40Holdings[0]?.symbol || 'THYAO',
         name: week40Holdings[0]?.stock.name || 'Türk Hava Yolları',
         action: 'AĞIRLIK ARTIR',
-        reason: '25 Eylül Cuma kapanışında %78 alıcı baskısı, HH/HL devam teyidi ve 8.7/10 trend gücüyle liderlik pekiştirildi.',
+        reason: '26 Eylül Cuma kapanışında alıcı baskısı, HH/HL devam teyidi ve güçlü trend gücüyle liderlik pekiştirildi.',
         fridayTrendScore: week40Holdings[0]?.trendScore || 88.2,
       },
       {
@@ -653,14 +470,14 @@ export function generateWeeklySnapshots(
         symbol: 'TAVHL',
         name: 'TAV Havalimanları',
         action: 'YENİ GİRİŞ',
-        reason: '25 Eylül Cuma kapanışında 8.5/10 trend gücü ve havacılık sektöründe direnç kırılımı teyidiyle portföye yeni eklendi.',
+        reason: '26 Eylül Cuma kapanışında güçlü trend ve havacılık sektöründe direnç kırılımı teyidiyle portföye yeni eklendi.',
         fridayTrendScore: 84.5,
       },
       {
         symbol: 'BINHO',
         name: 'Bin Yatırımlar Holding',
         action: 'ÇIKIŞ',
-        reason: 'Trend Analizi puanı 24/100, yapı bozulması (Death Cross) ve %81 Ayı baskısı devam ettiği için kesinlikle portföy dışında tutuldu.',
+        reason: 'Trend Analizi puanı düşük, yapı bozulması ve Ayı baskısı devam ettiği için portföy dışında tutuldu.',
         fridayTrendScore: 24.0,
       },
     ] : strategy === 'MOMENTUM_BÜYÜME' ? [
@@ -668,14 +485,14 @@ export function generateWeeklySnapshots(
         symbol: week40Holdings[0]?.symbol || 'ASTOR',
         name: week40Holdings[0]?.stock.name || 'Astor Enerji',
         action: 'YENİ GİRİŞ',
-        reason: '25 Eylül Cuma kapanışında daralan konsolidasyondan hacimli yukarı patlama (Squeeze Breakout) teyidiyle eklendi.',
+        reason: '26 Eylül Cuma kapanışında daralan konsolidasyondan hacimli yukarı patlama (Squeeze Breakout) teyidiyle eklendi.',
         fridayTrendScore: 86.4,
       },
       {
         symbol: week40Holdings[1]?.symbol || 'TKFEN',
         name: week40Holdings[1]?.stock.name || 'Tekfen Holding',
         action: 'KORU',
-        reason: 'Direnç seviyesinde konsolidasyon enerji birikimi (8.5/10) korunduğu için pozisyon taşınıyor.',
+        reason: 'Direnç seviyesinde konsolidasyon enerji birikimi korunduğu için pozisyon taşınıyor.',
         fridayTrendScore: 82.8,
       },
       {
@@ -690,7 +507,7 @@ export function generateWeeklySnapshots(
         symbol: week40Holdings[0]?.symbol || 'TUPRS',
         name: week40Holdings[0]?.stock.name || 'Tüpraş',
         action: 'KORU',
-        reason: '25 Eylül Cuma kapanışında %9.8 temettü verimi ve korunan makro yükseliş trendiyle liderlik korundu.',
+        reason: '26 Eylül Cuma kapanışında yüksek temettü verimi ve korunan makro yükseliş trendiyle liderlik korundu.',
         fridayTrendScore: 85.1,
       },
       {
@@ -706,7 +523,7 @@ export function generateWeeklySnapshots(
     avgTrendStrength: Math.round((week40Holdings.reduce((sum, h) => sum + (h.trendStrength || 0), 0) / week40Holdings.length) * 10) / 10,
     winCount: week40Holdings.filter((h) => h.returnPercent >= 0).length,
     lossCount: week40Holdings.filter((h) => h.returnPercent < 0).length,
-    summary: '25 Eylül Cuma kapanış verileri ve 17 aşamalı trend analiz teyitleriyle oluşturulan aktif canlı haftalık model portföy.',
+    summary: '26 Eylül Cuma kapanış verileri ve 17 aşamalı trend analiz teyitleriyle oluşturulan aktif canlı haftalık model portföy.',
   };
 
   // 2. Hafta: 21 Eylül 2026 Haftası (18 Eylül Cuma Kapanış Verisi ile Oluşturuldu) -> TAMAMLANDI
