@@ -1,4 +1,7 @@
+const fs = require('fs');
+const path = require('path');
 
+const newCode = `
 import { NextResponse } from 'next/server';
 import { CURATED_BIST_RAW } from '@/lib/bist-data';
 import { calcSMA, calcRSI, calcMACD, calcBollinger } from '@/lib/technical-indicators';
@@ -21,8 +24,8 @@ async function fetchSparkChunks(symbols: string[]): Promise<Record<string, any>>
   
   for (let i = 0; i < symbols.length; i += BATCH) {
     const chunk = symbols.slice(i, i + BATCH);
-    const batch = chunk.map(s => `${s}.IS`).join(',');
-    const url = `https://query1.finance.yahoo.com/v7/finance/spark?symbols=${batch}&range=1y&interval=1d`;
+    const batch = chunk.map(s => \`\${s}.IS\`).join(',');
+    const url = \`https://query1.finance.yahoo.com/v7/finance/spark?symbols=\${batch}&range=1y&interval=1d\`;
     
     try {
       const res = await fetch(url, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(10000), cache: 'no-store' });
@@ -96,8 +99,8 @@ export async function GET(request: Request) {
     const sparkData = await fetchSparkChunks(BIST_TUM_SYMBOLS);
     
     // Fetch Yahoo Quote Data using yahooFinance2
-    const yfSymbols = BIST_TUM_SYMBOLS.map(s => `${s}.IS`);
-    let quoteData: any[] = [];
+    const yfSymbols = BIST_TUM_SYMBOLS.map(s => \`\${s}.IS\`);
+    let quoteData = [];
     try {
       quoteData = await yf.quote(yfSymbols);
     } catch (err) {
@@ -108,7 +111,7 @@ export async function GET(request: Request) {
     const finalData: Record<string, any> = {};
     for (const sym of BIST_TUM_SYMBOLS) {
       const s = sparkData[sym] || {};
-      const q = quoteData.find((x: any) => x.symbol === `${sym}.IS`) || {};
+      const q = quoteData.find((x: any) => x.symbol === \`\${sym}.IS\`) || {};
       
       finalData[sym] = {
         ...s,
@@ -137,3 +140,7 @@ export async function POST() {
   memCache.clear();
   return NextResponse.json({ success: true, message: 'Cache temizlendi.' });
 }
+`;
+
+fs.writeFileSync(path.join(process.cwd(), 'app/api/stocks/route.ts'), newCode);
+console.log('stocks route rewritten again.');

@@ -18,6 +18,7 @@ export interface LiveStockQuote {
   dayHigh: number | null;
   dayLow: number | null;
   pe: number | null;
+  pb?: number | null;
   eps: number | null;
   name: string;
   currency: string;
@@ -282,13 +283,25 @@ export function applyLivePrice<T extends { symbol: string; currentPrice: number;
   }
 
   // Temel Analiz Çarpanları
-  let fundamental = (stock as any).fundamental;
-  if (fundamental && quote.pe != null && quote.pe > 0) {
-    fundamental = {
-      ...fundamental,
-      pe: +(quote.pe).toFixed(1),
-    };
+  let fundamental = (stock as any).fundamental || {};
+  const rawPe = quote.pe || fundamental.pe || 0;
+  const rawPb = quote.pb || fundamental.pb || 0;
+  const eps = quote.eps || 0;
+  
+  let computedRoe = fundamental.roe || 0;
+  if (rawPe > 0 && rawPb > 0) {
+    computedRoe = (rawPb / rawPe) * 100;
+  } else if (rawPb > 0 && eps > 0 && livePrice > 0) {
+    const bookValue = livePrice / rawPb;
+    computedRoe = (eps / bookValue) * 100;
   }
+
+  fundamental = {
+    ...fundamental,
+    pe: rawPe > 0 ? +(rawPe).toFixed(1) : 0,
+    pb: rawPb > 0 ? +(rawPb).toFixed(1) : 0,
+    roe: computedRoe !== 0 ? +(computedRoe).toFixed(1) : 0,
+  };
 
   // Skorlama Motoru ile Canlı Fiyata Göre Yenileme
   let score = (stock as any).score;
